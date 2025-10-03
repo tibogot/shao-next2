@@ -202,7 +202,8 @@ export async function fetchProductByHandle(handle: string) {
           {namespace: "custom", key: "ingredients"},
           {namespace: "custom", key: "how_to_use"},
           {namespace: "custom", key: "benefits"},
-          {namespace: "custom", key: "skin_type"}
+          {namespace: "custom", key: "skin_type"},
+          {namespace: "custom", key: "long_description"}
         ]) {
           key
           value

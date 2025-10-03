@@ -127,7 +127,7 @@ export default function CartDrawer() {
           </h2>
           <button
             onClick={closeCart}
-            className="cursor-pointer rounded-full p-2 transition-colors hover:bg-gray-100"
+            className="cursor-pointer p-2 transition-colors hover:bg-gray-100"
           >
             <svg
               className="h-6 w-6"
@@ -178,12 +178,12 @@ export default function CartDrawer() {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="flex gap-4 rounded-lg border border-gray-200 p-4"
+                    className="flex gap-4 border border-gray-200 p-4"
                   >
                     <img
                       src={item.image}
                       alt={item.title}
-                      className="h-20 w-20 rounded-lg object-cover"
+                      className="h-20 w-20 object-cover"
                     />
                     <div className="flex-1">
                       <h3 className="font-medium">{item.title}</h3>
@@ -195,7 +195,7 @@ export default function CartDrawer() {
                           onClick={() =>
                             handleQuantityChange(item.id, item.quantity - 1)
                           }
-                          className="cursor-pointer rounded-full p-1 hover:bg-gray-100"
+                          className="cursor-pointer p-1 hover:bg-gray-100"
                         >
                           <svg
                             className="h-4 w-4"
@@ -218,7 +218,7 @@ export default function CartDrawer() {
                           onClick={() =>
                             handleQuantityChange(item.id, item.quantity + 1)
                           }
-                          className="cursor-pointer rounded-full p-1 hover:bg-gray-100"
+                          className="cursor-pointer p-1 hover:bg-gray-100"
                         >
                           <svg
                             className="h-4 w-4"
@@ -243,14 +243,8 @@ export default function CartDrawer() {
                       </p>
                       <div className="flex gap-1">
                         <button
-                          onClick={() => saveForLater(item)}
-                          className="cursor-pointer rounded bg-gray-100 px-2 py-1 text-xs text-gray-700 hover:bg-gray-200"
-                        >
-                          Save
-                        </button>
-                        <button
                           onClick={() => removeFromCart(item.id)}
-                          className="cursor-pointer rounded bg-red-100 px-2 py-1 text-xs text-red-700 hover:bg-red-200"
+                          className="cursor-pointer bg-red-100 px-2 py-1 text-xs text-red-700 hover:bg-red-200"
                         >
                           Remove
                         </button>
@@ -271,12 +265,12 @@ export default function CartDrawer() {
               {savedItems.map((item) => (
                 <div
                   key={item.id}
-                  className="mb-3 flex items-center gap-3 rounded-lg border border-gray-200 p-3"
+                  className="mb-3 flex items-center gap-3 border border-gray-200 p-3"
                 >
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="h-16 w-16 rounded-lg object-cover"
+                    className="h-16 w-16 object-cover"
                   />
                   <div className="flex-1">
                     <h4 className="font-medium">{item.title}</h4>
@@ -285,13 +279,13 @@ export default function CartDrawer() {
                   <div className="flex gap-1">
                     <button
                       onClick={() => moveToCart(item)}
-                      className="cursor-pointer rounded bg-black px-2 py-1 text-xs text-white hover:bg-gray-800"
+                      className="cursor-pointer bg-black px-2 py-1 text-xs text-white hover:bg-gray-800"
                     >
                       Move to Cart
                     </button>
                     <button
                       onClick={() => removeSavedItem(item.id)}
-                      className="cursor-pointer rounded bg-red-100 px-2 py-1 text-xs text-red-700 hover:bg-red-200"
+                      className="cursor-pointer bg-red-100 px-2 py-1 text-xs text-red-700 hover:bg-red-200"
                     >
                       Remove
                     </button>
@@ -330,12 +324,12 @@ export default function CartDrawer() {
             </div>
 
             <div className="mt-6 space-y-3">
-              <button className="w-full cursor-pointer rounded-lg bg-black py-3 text-white transition-colors hover:bg-gray-800">
+              <button className="w-full cursor-pointer bg-black py-3 text-white transition-colors hover:bg-gray-800">
                 Proceed to Checkout
               </button>
               <button
                 onClick={clearCart}
-                className="w-full cursor-pointer rounded-lg border border-gray-300 py-3 text-gray-700 transition-colors hover:border-black hover:text-black"
+                className="w-full cursor-pointer border border-gray-300 py-3 text-gray-700 transition-colors hover:border-black hover:text-black"
               >
                 Clear Cart
               </button>

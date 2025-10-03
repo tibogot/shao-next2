@@ -81,9 +81,7 @@ export default function ProductPage() {
     Record<string, string>
   >({});
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState<
-    "description" | "ingredients" | "howToUse" | "benefits"
-  >("description");
+  const [openAccordions, setOpenAccordions] = useState<Set<string>>(new Set());
   // DISABLED: Wishlist feature temporarily disabled
   // const [isInWishlist, setIsInWishlist] = useState(false);
 
@@ -225,6 +223,18 @@ export default function ProductPage() {
     return metafield?.value || "";
   };
 
+  const toggleAccordion = (key: string) => {
+    setOpenAccordions((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(key)) {
+        newSet.delete(key);
+      } else {
+        newSet.add(key);
+      }
+      return newSet;
+    });
+  };
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -311,19 +321,19 @@ export default function ProductPage() {
           </div>
 
           {/* Product Info */}
-          <div className="flex h-screen flex-col justify-center space-y-6 py-8">
+          <div className="flex min-h-screen flex-col justify-start space-y-6 py-30">
             {/* Header */}
             <div>
-              <p className="font-neue-montreal-mono mb-2 text-sm text-black/60 uppercase">
+              {/* <p className="font-neue-montreal-mono mb-2 text-sm text-black/60 uppercase">
                 {product.vendor}
-              </p>
-              <h1 className="font-neue-montreal mb-4 text-2xl font-light md:text-3xl lg:text-4xl">
+              </p> */}
+              <h1 className="font-neue-montreal mb-2 text-2xl font-light md:text-3xl lg:text-4xl">
                 {product.title}
               </h1>
 
               {/* Price */}
               <div className="mb-4 flex flex-wrap items-center gap-3">
-                <span className="text-xl font-light md:text-2xl">
+                <span className="font-neue-montreal-mono text-xl md:text-base">
                   ${parseFloat(currentPrice).toFixed(2)}{" "}
                   {selectedVariant?.price.currencyCode || "USD"}
                 </span>
@@ -339,8 +349,34 @@ export default function ProductPage() {
                 )}
               </div>
 
+              {/* Description */}
+              <div className="font-neue-montreal mb-6">
+                {getMetafieldValue("long_description") ? (
+                  <div
+                    className="prose prose-gray prose-sm md:prose-base max-w-none"
+                    dangerouslySetInnerHTML={{
+                      __html: getMetafieldValue("long_description"),
+                    }}
+                  />
+                ) : product.descriptionHtml.length > 500 ? (
+                  <div
+                    className="prose prose-gray prose-sm md:prose-base max-w-none"
+                    dangerouslySetInnerHTML={{
+                      __html: product.descriptionHtml,
+                    }}
+                  />
+                ) : (
+                  <div
+                    className="prose prose-gray prose-sm md:prose-base max-w-none"
+                    dangerouslySetInnerHTML={{
+                      __html: product.descriptionHtml,
+                    }}
+                  />
+                )}
+              </div>
+
               {/* Availability */}
-              <div className="mb-6 flex items-center gap-2">
+              {/* <div className="mb-6 flex items-center gap-2">
                 <div
                   className={`h-2 w-2 rounded-full ${
                     selectedVariant?.availableForSale
@@ -353,7 +389,7 @@ export default function ProductPage() {
                     ? `In stock${selectedVariant.quantityAvailable > 0 ? ` (${selectedVariant.quantityAvailable} available)` : ""}`
                     : "Out of stock"}
                 </span>
-              </div>
+              </div> */}
             </div>
 
             {/* Product Options */}
@@ -385,31 +421,33 @@ export default function ProductPage() {
               ))}
 
             {/* Quantity */}
-            <div className="space-y-3">
+            <div className="mb-2 flex items-center justify-between">
               <label className="font-neue-montreal-mono text-sm text-black/80 uppercase">
                 Quantity
               </label>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className={`h-10 w-10 rounded-lg border transition-colors ${
+                  className={`h-10 w-10 rounded-lg transition-colors ${
                     quantity <= 1
-                      ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400"
-                      : "cursor-pointer border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+                      ? "cursor-not-allowed text-gray-300"
+                      : "cursor-pointer hover:bg-gray-50"
                   }`}
                   disabled={quantity <= 1}
                 >
                   -
                 </button>
-                <span className="w-16 text-center font-medium">{quantity}</span>
+                <span className="font-neue-montreal-mono w-12 text-center font-medium">
+                  {quantity}
+                </span>
                 <button
                   onClick={() => setQuantity(quantity + 1)}
-                  className={`h-10 w-10 rounded-lg border transition-colors ${
+                  className={`h-10 w-10 rounded-lg transition-colors ${
                     selectedVariant &&
                     selectedVariant.quantityAvailable > 0 &&
                     quantity >= selectedVariant.quantityAvailable
-                      ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400"
-                      : "cursor-pointer border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+                      ? "cursor-not-allowed bg-gray-100 text-gray-400"
+                      : "cursor-pointer hover:bg-gray-50"
                   }`}
                   disabled={Boolean(
                     selectedVariant &&
@@ -461,81 +499,111 @@ export default function ProductPage() {
               </motion.button>
             </div> */}
 
-            {/* Product Details Tabs */}
+            {/* Product Details Accordion */}
             <div className="border-t pt-6">
-              <div className="mb-10 flex flex-wrap gap-y-4 overflow-x-auto border-b md:overflow-visible">
+              <div className="space-y-2">
                 {[
                   { key: "description", label: "Description" },
                   { key: "ingredients", label: "Ingredients" },
                   { key: "howToUse", label: "How to Use" },
                   { key: "benefits", label: "Benefits" },
-                ].map(({ key, label }) => (
-                  <button
-                    key={key}
-                    onClick={() => setActiveTab(key as any)}
-                    className={`font-neue-montreal-mono flex-shrink-0 cursor-pointer px-3 pb-4 text-xs whitespace-nowrap uppercase transition-colors md:px-4 md:text-sm ${
-                      activeTab === key
-                        ? "border-b-2 border-black text-black"
-                        : "text-gray-500 hover:text-gray-700"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
+                ].map(({ key, label }) => {
+                  const isOpen = openAccordions.has(key);
 
-              <div className="pt-4">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeTab}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2 }}
-                    className="prose prose-gray prose-sm md:prose-base max-w-none"
-                  >
-                    {activeTab === "description" && (
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: product.descriptionHtml,
-                        }}
-                      />
-                    )}
-                    {activeTab === "ingredients" && (
-                      <div>
-                        {getMetafieldValue("ingredients") ? (
-                          <p>{getMetafieldValue("ingredients")}</p>
-                        ) : (
-                          <p className="text-gray-500">
-                            Ingredients information not available.
-                          </p>
-                        )}
-                      </div>
-                    )}
-                    {activeTab === "howToUse" && (
-                      <div>
-                        {getMetafieldValue("how_to_use") ? (
-                          <p>{getMetafieldValue("how_to_use")}</p>
-                        ) : (
-                          <p className="text-gray-500">
-                            Usage instructions not available.
-                          </p>
-                        )}
-                      </div>
-                    )}
-                    {activeTab === "benefits" && (
-                      <div>
-                        {getMetafieldValue("benefits") ? (
-                          <p>{getMetafieldValue("benefits")}</p>
-                        ) : (
-                          <p className="text-gray-500">
-                            Benefits information not available.
-                          </p>
-                        )}
-                      </div>
-                    )}
-                  </motion.div>
-                </AnimatePresence>
+                  return (
+                    <div key={key} className="border-b border-gray-200">
+                      <button
+                        onClick={() => toggleAccordion(key)}
+                        className="font-neue-montreal-mono flex w-full items-center justify-between py-4 text-xs text-gray-700 uppercase md:text-sm"
+                      >
+                        <span>{label}</span>
+                        <motion.div
+                          animate={{ rotate: isOpen ? 45 : 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="text-gray-500"
+                        >
+                          <svg
+                            className="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                            />
+                          </svg>
+                        </motion.div>
+                      </button>
+
+                      <motion.div
+                        initial={false}
+                        animate={{ height: isOpen ? "auto" : 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        style={{ overflow: "hidden" }}
+                      >
+                        <div className="pb-4">
+                          <div className="prose prose-gray prose-sm md:prose-base font-neue-montreal max-w-none">
+                            {key === "description" && (
+                              <div
+                                dangerouslySetInnerHTML={{
+                                  __html: product.descriptionHtml,
+                                }}
+                              />
+                            )}
+                            {key === "ingredients" && (
+                              <div>
+                                {getMetafieldValue("ingredients") ? (
+                                  <div
+                                    dangerouslySetInnerHTML={{
+                                      __html: getMetafieldValue("ingredients"),
+                                    }}
+                                  />
+                                ) : (
+                                  <p className="text-gray-500">
+                                    Ingredients information not available.
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                            {key === "howToUse" && (
+                              <div>
+                                {getMetafieldValue("how_to_use") ? (
+                                  <div
+                                    dangerouslySetInnerHTML={{
+                                      __html: getMetafieldValue("how_to_use"),
+                                    }}
+                                  />
+                                ) : (
+                                  <p className="text-gray-500">
+                                    Usage instructions not available.
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                            {key === "benefits" && (
+                              <div>
+                                {getMetafieldValue("benefits") ? (
+                                  <div
+                                    dangerouslySetInnerHTML={{
+                                      __html: getMetafieldValue("benefits"),
+                                    }}
+                                  />
+                                ) : (
+                                  <p className="text-gray-500">
+                                    Benefits information not available.
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </motion.div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
