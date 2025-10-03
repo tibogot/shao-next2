@@ -28,7 +28,7 @@ export default function CartDrawer() {
     } else if (visible) {
       setShouldShow(false);
       // Wait for animation before unmounting
-      const timeout = setTimeout(() => setVisible(false), 300);
+      const timeout = setTimeout(() => setVisible(false), 500);
       return () => clearTimeout(timeout);
     }
   }, [isCartOpen]);
@@ -110,20 +110,30 @@ export default function CartDrawer() {
   if (!visible && !isCartOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex justify-end bg-black/30"
-      onClick={closeCart}
-    >
+    <>
+      {/* Grey Overlay */}
+      <div
+        className={`fixed inset-0 z-40 transition-opacity duration-500 ease-out ${
+          shouldShow ? "opacity-100" : "opacity-0"
+        }`}
+        onClick={closeCart}
+        style={{
+          backgroundColor: "rgba(0, 0, 0, 0.3)",
+        }}
+      />
+
+      {/* Shopping Cart */}
       <div
         ref={drawerRef}
         tabIndex={-1}
-        className={`flex h-full w-full max-w-md flex-col bg-white shadow-lg transition-transform duration-300 ease-in-out ${shouldShow ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed top-0 right-0 z-50 flex h-full w-full max-w-lg flex-col bg-white transition-transform duration-500 ease-out ${shouldShow ? "translate-x-0" : "translate-x-full"}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-200 p-6">
-          <h2 className="text-xl font-semibold">
-            Shopping Cart ({totalItems})
+          <h2 className="font-neue-montreal text-xl">
+            Shopping Cart
+            {/*({totalItems})*/}
           </h2>
           <button
             onClick={closeCart}
@@ -167,8 +177,12 @@ export default function CartDrawer() {
                     d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
                   />
                 </svg>
-                <p className="mt-4 text-lg">Your cart is empty</p>
-                <p className="text-sm">Start shopping to add items</p>
+                <p className="font-neue-montreal mt-4 text-lg">
+                  Your cart is empty
+                </p>
+                <p className="font-neue-montreal text-sm">
+                  Start shopping to add items
+                </p>
               </motion.div>
             ) : (
               <div className="space-y-4">
@@ -177,8 +191,8 @@ export default function CartDrawer() {
                     key={item.id}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="flex gap-4 border border-gray-200 p-4"
+                    transition={{ delay: 0.3 + index * 0.1 }}
+                    className="flex gap-4 border-b border-gray-200 p-4"
                   >
                     <img
                       src={item.image}
@@ -186,8 +200,12 @@ export default function CartDrawer() {
                       className="h-20 w-20 object-cover"
                     />
                     <div className="flex-1">
-                      <h3 className="font-medium">{item.title}</h3>
-                      <p className="text-sm text-gray-600">€{item.price}</p>
+                      <h3 className="font-neue-montreal font-medium">
+                        {item.title}
+                      </h3>
+                      <p className="font-neue-montreal text-sm text-gray-600">
+                        €{item.price}
+                      </p>
 
                       {/* Quantity Controls */}
                       <div className="mt-2 flex items-center gap-2">
@@ -211,7 +229,7 @@ export default function CartDrawer() {
                             />
                           </svg>
                         </button>
-                        <span className="w-8 text-center text-sm">
+                        <span className="font-neue-montreal w-8 text-center text-sm">
                           {item.quantity}
                         </span>
                         <button
@@ -238,13 +256,13 @@ export default function CartDrawer() {
                     </div>
 
                     <div className="flex flex-col items-end gap-2">
-                      <p className="font-medium">
+                      <p className="font-neue-montreal font-medium">
                         €{(item.price * item.quantity).toFixed(2)}
                       </p>
                       <div className="flex gap-1">
                         <button
                           onClick={() => removeFromCart(item.id)}
-                          className="cursor-pointer bg-red-100 px-2 py-1 text-xs text-red-700 hover:bg-red-200"
+                          className="font-neue-montreal cursor-pointer text-xs underline hover:no-underline"
                         >
                           Remove
                         </button>
@@ -259,7 +277,7 @@ export default function CartDrawer() {
           {/* Saved for Later */}
           {savedItems.length > 0 && (
             <div className="mt-8">
-              <h3 className="mb-4 text-lg font-medium text-gray-700">
+              <h3 className="font-neue-montreal mb-4 text-lg font-medium text-gray-700">
                 Saved for Later
               </h3>
               {savedItems.map((item) => (
@@ -273,19 +291,23 @@ export default function CartDrawer() {
                     className="h-16 w-16 object-cover"
                   />
                   <div className="flex-1">
-                    <h4 className="font-medium">{item.title}</h4>
-                    <p className="text-sm text-gray-600">€{item.price}</p>
+                    <h4 className="font-neue-montreal font-medium">
+                      {item.title}
+                    </h4>
+                    <p className="font-neue-montreal text-sm text-gray-600">
+                      €{item.price}
+                    </p>
                   </div>
                   <div className="flex gap-1">
                     <button
                       onClick={() => moveToCart(item)}
-                      className="cursor-pointer bg-black px-2 py-1 text-xs text-white hover:bg-gray-800"
+                      className="font-neue-montreal cursor-pointer bg-black px-2 py-1 text-xs text-white hover:bg-gray-800"
                     >
                       Move to Cart
                     </button>
                     <button
                       onClick={() => removeSavedItem(item.id)}
-                      className="cursor-pointer bg-red-100 px-2 py-1 text-xs text-red-700 hover:bg-red-200"
+                      className="font-neue-montreal cursor-pointer bg-red-100 px-2 py-1 text-xs text-red-700 hover:bg-red-200"
                     >
                       Remove
                     </button>
@@ -301,42 +323,46 @@ export default function CartDrawer() {
           <div className="border-t border-gray-200 p-6">
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
-                <span>Subtotal</span>
-                <span>€{subtotal.toFixed(2)}</span>
+                <span className="font-neue-montreal">Subtotal</span>
+                <span className="font-neue-montreal">
+                  €{subtotal.toFixed(2)}
+                </span>
               </div>
               <div className="flex justify-between">
-                <span>Shipping</span>
-                <span>
+                <span className="font-neue-montreal">Shipping</span>
+                <span className="font-neue-montreal">
                   {shipping === 0 ? "Free" : `€${shipping.toFixed(2)}`}
                 </span>
               </div>
               {shipping > 0 && (
-                <div className="text-xs text-gray-500">
+                <div className="font-neue-montreal text-xs text-gray-500">
                   Free shipping on orders over €50
                 </div>
               )}
-              <div className="border-t pt-3 text-lg font-semibold">
+              <div className="border-t pt-3 text-lg">
                 <div className="flex justify-between">
-                  <span>Total</span>
-                  <span>€{total.toFixed(2)}</span>
+                  <span className="font-neue-montreal">Total</span>
+                  <span className="font-neue-montreal">
+                    €{total.toFixed(2)}
+                  </span>
                 </div>
               </div>
             </div>
 
             <div className="mt-6 space-y-3">
-              <button className="w-full cursor-pointer bg-black py-3 text-white transition-colors hover:bg-gray-800">
+              <button className="font-neue-montreal w-full cursor-pointer bg-black py-3 text-white transition-colors hover:bg-gray-800">
                 Proceed to Checkout
               </button>
-              <button
+              {/* <button
                 onClick={clearCart}
-                className="w-full cursor-pointer border border-gray-300 py-3 text-gray-700 transition-colors hover:border-black hover:text-black"
+                className="font-neue-montreal w-full cursor-pointer border border-gray-300 py-3 text-gray-700 transition-colors hover:border-black hover:text-black"
               >
                 Clear Cart
-              </button>
+              </button> */}
             </div>
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 }
