@@ -21,11 +21,11 @@ export default function AboutPage() {
         {/* Right side - Image */}
         <div className="w-1/2">
           <Image
-            src="/images/image-3.jpg"
+            src="/images/about-img1.webp"
             alt="About us hero image"
-            width={800}
-            height={600}
-            className="h-full w-full object-cover"
+            width={1920}
+            height={2400}
+            className="h-screen w-full object-cover"
             sizes="50vw"
             priority
           />
@@ -123,8 +123,8 @@ export default function AboutPage() {
       </section>
 
       {/* Images Section - 50/50 with two images */}
-      <section className="flex flex-col gap-6 px-4 py-12 md:flex-row md:gap-8 md:px-8 md:py-16">
-        <div className="p-6 md:w-1/2">
+      <section className="flex flex-col gap-4 px-4 py-12 md:flex-row md:gap-4 md:px-8 md:py-16">
+        <div className="p-0 md:w-1/2">
           <Image
             src="/images/image-4.jpg"
             alt="SHAO ingredients"
@@ -135,7 +135,7 @@ export default function AboutPage() {
             priority={false}
           />
         </div>
-        <div className="p-6 md:w-1/2">
+        <div className="p-0 md:w-1/2">
           <Image
             src="/images/press-1.jpg"
             alt="SHAO process"
